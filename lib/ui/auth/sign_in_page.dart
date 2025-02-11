@@ -8,10 +8,42 @@ class SignInPage extends StatefulWidget {
 }
 
 class _SignInPageState extends State<SignInPage> {
+  TextEditingController emailController = TextEditingController();
+  TextEditingController passwordController = TextEditingController();
+
+  final FirebaseService firebaseService = FirebaseService();
+
   bool isObscureText = true;
+
+  void signIn() async {
+    String email = emailController.text.trim();
+    String password = passwordController.text.trim();
+
+    if (email.isEmpty || password.isEmpty) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text('Email and password cannot be empty.'),
+        ),
+      );
+    } else {
+      final user = await firebaseService.signIn(email, password);
+      if (user != null) {
+        Navigator.pushReplacementNamed(context, '/home');
+      } else {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text('Invalid email or password.'),
+            backgroundColor: Colors.red,
+          ),
+        );
+      }
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      resizeToAvoidBottomInset: false,
       body: Center(
         child: Column(
           children: [
@@ -67,6 +99,7 @@ class _SignInPageState extends State<SignInPage> {
             SizedBox(
               width: MediaQuery.of(context).size.width * 0.9,
               child: TextFormField(
+                controller: emailController,
                 decoration: InputDecoration(
                   hintText: 'example@gmail.com',
                   hintStyle: TextStyle(color: greeyColor),
@@ -88,6 +121,7 @@ class _SignInPageState extends State<SignInPage> {
             SizedBox(
               width: MediaQuery.of(context).size.width * 0.9,
               child: TextFormField(
+                controller: passwordController,
                 decoration: InputDecoration(
                   hintText: '********',
                   hintStyle: TextStyle(color: greeyColor),
@@ -138,7 +172,9 @@ class _SignInPageState extends State<SignInPage> {
                   borderRadius: BorderRadius.circular(100),
                 ),
                 child: TextButton(
-                    onPressed: () {},
+                    onPressed: () {
+                      signIn();
+                    },
                     child: Text('Sign In', style: titleTextStyle)),
               ),
             ),
