@@ -11,6 +11,7 @@ class FirebaseService {
         email: email,
         password: password,
       );
+      print("User: ${userCredential.user}");
       return userCredential.user;
     } catch (e) {
       if (kDebugMode) {
@@ -18,5 +19,34 @@ class FirebaseService {
       }
     }
     return null;
+  }
+
+  Future<User?> signUp(String email, String password) async {
+    try {
+      UserCredential userCredential =
+          await _auth.createUserWithEmailAndPassword(
+        email: email,
+        password: password,
+      );
+      print("User: ${userCredential.user}");
+      return userCredential.user;
+    } catch (e) {
+      if (kDebugMode) {
+        print(e);
+      }
+    }
+    return null;
+  }
+
+  Future<void> signOut() async {
+    await FirebaseAuth.instance.signOut();
+  }
+
+  get currentUser => _auth.currentUser;
+
+  Future<Map<String, dynamic>> getUserData(String userId) async {
+    final DocumentSnapshot userDoc =
+        await FirebaseFirestore.instance.collection("users").doc(userId).get();
+    return userDoc.data() as Map<String, dynamic>;
   }
 }
