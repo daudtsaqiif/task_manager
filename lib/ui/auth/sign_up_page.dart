@@ -103,7 +103,7 @@ class _SignUpPageState extends State<SignUpPage> {
                           ),
                           child: TextButton(
                             onPressed: () {},
-                            child: Text('Sign Up', style: titleTextStyle),
+                            child: Text('Sign Up', style: titleTextStyle.copyWith(fontSize: 16)),
                           ),
                         ),
                         const SizedBox(width: 30),
@@ -339,7 +339,7 @@ class _SignUpPageState extends State<SignUpPage> {
                         onPressed: () {
                           _signUp();
                         },
-                        child: Text('Sign Up', style: titleTextStyle)),
+                        child: Text('Sign Up', style: titleTextStyle.copyWith(fontSize: 16))),
                   ),
                 ),
                 const SizedBox(height: 20),

@@ -17,13 +17,13 @@ TextStyle welcomeTextStyle = GoogleFonts.poppins(
 );
 
 TextStyle subTextStyle = GoogleFonts.poppins(
-  fontSize: 15,
+  fontSize: 14,
   fontWeight: FontWeight.w400,
   color: subColor,
 );
 
 TextStyle titleTextStyle = GoogleFonts.poppins(
-  fontSize: 14,
+  fontSize: 17,
   fontWeight: FontWeight.w600,
   color: balckColor,
 );

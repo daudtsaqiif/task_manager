@@ -82,7 +82,7 @@ class _SignInPageState extends State<SignInPage> {
                       ),
                       child: TextButton(
                         onPressed: () {},
-                        child: Text('Sign In', style: titleTextStyle),
+                        child: Text('Sign In', style: titleTextStyle.copyWith(fontSize: 16)),
                       ),
                     ),
                   ],
@@ -175,7 +175,7 @@ class _SignInPageState extends State<SignInPage> {
                     onPressed: () {
                       signIn();
                     },
-                    child: Text('Sign In', style: titleTextStyle)),
+                    child: Text('Sign In', style: titleTextStyle.copyWith(fontSize: 16))),
               ),
             ),
             const SizedBox(height: 20),
