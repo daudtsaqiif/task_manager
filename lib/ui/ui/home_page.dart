@@ -328,7 +328,7 @@ class _HomePageState extends State<HomePage> {
                                         CrossAxisAlignment.start,
                                     children: [
                                       Text(
-                                        'On going',
+                                        'Not Yet',
                                         style: titleTextStyle.copyWith(
                                             fontSize: 16,
                                             fontWeight: FontWeight.w800),
@@ -457,333 +457,164 @@ class _HomePageState extends State<HomePage> {
                 ),
                 const SizedBox(height: 10),
                 StreamBuilder(
-                    stream: _auth.getTask(),
-                    builder: (context, snapshot) {
-                      if (snapshot.connectionState == ConnectionState.waiting) {
-                        return const Center(
-                          child: CircularProgressIndicator(),
-                        );
-                      }
-                      if (snapshot.hasError) {
-                        return const Center(
-                          child: Text('Error fetching data'),
-                        );
-                      }
-                      if (!snapshot.hasData || snapshot.data!.docs.isEmpty) {
-                        return const Center(
-                          child: Text('No data found'),
-                        );
-                      } else {
-                        return Column(
-                            children: snapshot.data!.docs
-                                .map(
-                                  (e) => Padding(
-                                    padding: const EdgeInsets.symmetric(
-                                        horizontal: 15.0),
-                                    child: Column(
-                                      children: [
-                                        Container(
-                                          width: MediaQuery.of(context)
-                                                  .size
-                                                  .width *
-                                              0.99,
-                                          height: 90,
-                                          decoration: BoxDecoration(
-                                            color: mainColor,
-                                            borderRadius:
-                                                BorderRadius.circular(10),
-                                            border: Border.all(
-                                              color: balckColor,
-                                              width: 2,
-                                            ),
-                                            boxShadow: [
-                                              BoxShadow(
-                                                color: Colors.black,
-                                                spreadRadius: 0,
-                                                offset: Offset(0, 4),
-                                              ),
-                                            ],
+                  stream: _auth.getTask(),
+                  builder: (context, snapshot) {
+                    if (snapshot.connectionState == ConnectionState.waiting) {
+                      return const Center(
+                        child: CircularProgressIndicator(),
+                      );
+                    }
+                    if (snapshot.hasError) {
+                      return const Center(
+                        child: Text('Error fetching data'),
+                      );
+                    }
+                    if (!snapshot.hasData || snapshot.data!.docs.isEmpty) {
+                      return const Center(
+                        child: Text('No data found'),
+                      );
+                    }
+
+                    return Column(
+                      children: snapshot.data!.docs.map((e) {
+                        String priority = e['priority']; // Priority task
+                        String status =
+                            e['status']; // Status task (Done / Not Done)
+                        String taskId = e.id; // ID task di Firestore
+
+                        Color cardColor;
+                        IconData iconData;
+                        Color iconColor;
+                        String newStatus =
+                            status == "Hasen't started" ? "Not Done" : "Done";
+
+                        // Tentukan warna dan ikon berdasarkan priority
+                        switch (priority.toLowerCase()) {
+                          case 'low':
+                            cardColor = greenColor;
+                            iconData = Icons.check_circle_outline;
+                            break;
+                          case 'medium':
+                            cardColor = yellowColor;
+                            iconData = Icons.access_time;
+                            break;
+                          case 'high':
+                          default:
+                            cardColor = mainColor;
+                            iconData = Icons.priority_high;
+                            break;
+                        }
+
+                        // Tentukan warna ikon berdasarkan status
+                        iconColor =
+                            status == "Done" ? Colors.grey : Colors.white;
+
+                        return Padding(
+                          padding: const EdgeInsets.symmetric(
+                              horizontal: 15.0, vertical: 8.0),
+                          child: Container(
+                            width: MediaQuery.of(context).size.width * 0.99,
+                            height: 90,
+                            decoration: BoxDecoration(
+                              color: cardColor,
+                              borderRadius: BorderRadius.circular(10),
+                              border: Border.all(
+                                color: balckColor,
+                                width: 2,
+                              ),
+                              boxShadow: [
+                                const BoxShadow(
+                                  color: Colors.black,
+                                  spreadRadius: 0,
+                                  offset: Offset(0, 4),
+                                ),
+                              ],
+                            ),
+                            child: Row(
+                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                              children: [
+                                Column(
+                                  crossAxisAlignment: CrossAxisAlignment.start,
+                                  children: [
+                                    const SizedBox(height: 10),
+                                    Padding(
+                                      padding: const EdgeInsets.only(left: 9.0),
+                                      child: Text(
+                                        e['title'],
+                                        style: titleTextStyle.copyWith(
+                                            fontSize: 19),
+                                      ),
+                                    ),
+                                    Padding(
+                                      padding: const EdgeInsets.only(left: 9.0),
+                                      child: Text(
+                                        'Status: $status', // Menampilkan status
+                                        style: subTextStyle.copyWith(
+                                            color: Colors.white),
+                                      ),
+                                    ),
+                                    Padding(
+                                      padding: const EdgeInsets.only(left: 9.0),
+                                      child: Row(
+                                        children: [
+                                          const Icon(
+                                              Icons.calendar_month_outlined),
+                                          Text(
+                                            e['date'],
+                                            style: defaultTextStyle.copyWith(
+                                                fontSize: 15),
                                           ),
-                                          child: Row(
-                                            mainAxisAlignment:
-                                                MainAxisAlignment.spaceBetween,
-                                            children: [
-                                              Column(
-                                                crossAxisAlignment:
-                                                    CrossAxisAlignment.start,
-                                                children: [
-                                                  const SizedBox(height: 10),
-                                                  Padding(
-                                                    padding:
-                                                        const EdgeInsets.only(
-                                                            left: 9.0),
-                                                    child: Text(
-                                                      e['title'],
-                                                      style: titleTextStyle
-                                                          .copyWith(
-                                                              fontSize: 19),
-                                                    ),
-                                                  ),
-                                                  Padding(
-                                                    padding:
-                                                        const EdgeInsets.only(
-                                                            left: 9.0),
-                                                    child: Text(
-                                                      'high',
-                                                      style:
-                                                          subTextStyle.copyWith(
-                                                              color:
-                                                                  Colors.white),
-                                                    ),
-                                                  ),
-                                                  Padding(
-                                                    padding:
-                                                        const EdgeInsets.only(
-                                                            left: 9.0),
-                                                    child: Row(
-                                                      children: [
-                                                        Icon(Icons
-                                                            .calendar_month_outlined),
-                                                        Text(
-                                                          e['date'],
-                                                          style:
-                                                              defaultTextStyle
-                                                                  .copyWith(
-                                                                      fontSize:
-                                                                          15),
-                                                        ),
-                                                      ],
-                                                    ),
-                                                  ),
-                                                ],
-                                              ),
-                                              Padding(
-                                                padding: const EdgeInsets.only(
-                                                    right: 9.0),
-                                                child: Container(
-                                                  width: 50,
-                                                  height: 50,
-                                                  decoration: BoxDecoration(
-                                                    color: primaryColor,
-                                                    borderRadius:
-                                                        BorderRadius.circular(
-                                                            100),
-                                                  ),
-                                                  child: Icon(
-                                                    Icons
-                                                        .flip_camera_android_outlined,
-                                                    size: 30,
-                                                    color: whiteColor,
-                                                  ),
-                                                ),
-                                              ),
-                                            ],
-                                          ),
-                                        ),
-                                        const SizedBox(height: 23),
-                                        Container(
-                                          width: MediaQuery.of(context)
-                                                  .size
-                                                  .width *
-                                              0.99,
-                                          height: 90,
-                                          decoration: BoxDecoration(
-                                            color: yellowColor,
-                                            borderRadius:
-                                                BorderRadius.circular(10),
-                                            border: Border.all(
-                                              color: balckColor,
-                                              width: 2,
-                                            ),
-                                            boxShadow: [
-                                              BoxShadow(
-                                                color: Colors.black,
-                                                spreadRadius: 0,
-                                                offset: Offset(0, 4),
-                                              ),
-                                            ],
-                                          ),
-                                          child: Row(
-                                            mainAxisAlignment:
-                                                MainAxisAlignment.spaceBetween,
-                                            children: [
-                                              Column(
-                                                crossAxisAlignment:
-                                                    CrossAxisAlignment.start,
-                                                children: [
-                                                  const SizedBox(height: 10),
-                                                  Padding(
-                                                    padding:
-                                                        const EdgeInsets.only(
-                                                            left: 9.0),
-                                                    child: Text(
-                                                      'medium',
-                                                      style: titleTextStyle
-                                                          .copyWith(
-                                                              fontSize: 19),
-                                                    ),
-                                                  ),
-                                                  Padding(
-                                                    padding:
-                                                        const EdgeInsets.only(
-                                                            left: 9.0),
-                                                    child: Text(
-                                                      'Bersama chef juna di bogor',
-                                                      style:
-                                                          subTextStyle.copyWith(
-                                                              color:
-                                                                  Colors.white),
-                                                    ),
-                                                  ),
-                                                  Padding(
-                                                    padding:
-                                                        const EdgeInsets.only(
-                                                            left: 9.0),
-                                                    child: Row(
-                                                      children: [
-                                                        Icon(Icons
-                                                            .calendar_month_outlined),
-                                                        Text(
-                                                          '19-03-25',
-                                                          style:
-                                                              defaultTextStyle
-                                                                  .copyWith(
-                                                                      fontSize:
-                                                                          15),
-                                                        ),
-                                                      ],
-                                                    ),
-                                                  ),
-                                                ],
-                                              ),
-                                              Padding(
-                                                padding: const EdgeInsets.only(
-                                                    right: 9.0),
-                                                child: Container(
-                                                  width: 50,
-                                                  height: 50,
-                                                  decoration: BoxDecoration(
-                                                    color: yellowColor,
-                                                    borderRadius:
-                                                        BorderRadius.circular(
-                                                            100),
-                                                  ),
-                                                  child: Icon(
-                                                    Icons.access_time,
-                                                    size: 30,
-                                                    color: whiteColor,
-                                                  ),
-                                                ),
-                                              ),
-                                            ],
-                                          ),
-                                        ),
-                                        const SizedBox(height: 23),
-                                        Container(
-                                          width: MediaQuery.of(context)
-                                                  .size
-                                                  .width *
-                                              0.99,
-                                          height: 90,
-                                          decoration: BoxDecoration(
-                                            color: primaryColor,
-                                            borderRadius:
-                                                BorderRadius.circular(10),
-                                            border: Border.all(
-                                              color: balckColor,
-                                              width: 2,
-                                            ),
-                                            boxShadow: [
-                                              BoxShadow(
-                                                color: Colors.black,
-                                                spreadRadius: 0,
-                                                offset: Offset(0, 4),
-                                              ),
-                                            ],
-                                          ),
-                                          child: Row(
-                                            mainAxisAlignment:
-                                                MainAxisAlignment.spaceBetween,
-                                            children: [
-                                              Column(
-                                                crossAxisAlignment:
-                                                    CrossAxisAlignment.start,
-                                                children: [
-                                                  const SizedBox(height: 10),
-                                                  Padding(
-                                                    padding:
-                                                        const EdgeInsets.only(
-                                                            left: 9.0),
-                                                    child: Text(
-                                                      e['title'],
-                                                      style: titleTextStyle
-                                                          .copyWith(
-                                                              fontSize: 19),
-                                                    ),
-                                                  ),
-                                                  Padding(
-                                                    padding:
-                                                        const EdgeInsets.only(
-                                                            left: 9.0),
-                                                    child: Text(
-                                                      e['description'],
-                                                      style:
-                                                          subTextStyle.copyWith(
-                                                              color:
-                                                                  whiteColor),
-                                                    ),
-                                                  ),
-                                                  Padding(
-                                                    padding:
-                                                        const EdgeInsets.only(
-                                                            left: 9.0),
-                                                    child: Row(
-                                                      children: [
-                                                        Icon(Icons
-                                                            .calendar_month_outlined),
-                                                        Text(
-                                                          e['date'],
-                                                          style:
-                                                              defaultTextStyle
-                                                                  .copyWith(
-                                                                      fontSize:
-                                                                          15),
-                                                        ),
-                                                      ],
-                                                    ),
-                                                  ),
-                                                ],
-                                              ),
-                                              Padding(
-                                                padding: const EdgeInsets.only(
-                                                    right: 9.0),
-                                                child: Container(
-                                                  width: 50,
-                                                  height: 50,
-                                                  decoration: BoxDecoration(
-                                                    color: greenColor,
-                                                    borderRadius:
-                                                        BorderRadius.circular(
-                                                            100),
-                                                  ),
-                                                  child: Icon(
-                                                    Icons.task_outlined,
-                                                    size: 30,
-                                                    color: whiteColor,
-                                                  ),
-                                                ),
-                                              ),
-                                            ],
-                                          ),
-                                        ),
-                                        const SizedBox(height: 23),
-                                      ],
+                                        ],
+                                      ),
+                                    ),
+                                  ],
+                                ),
+                                GestureDetector(
+                                  onTap: () async {
+                                    // Update status di Firebase
+                                    await FirebaseFirestore.instance
+                                        .collection('users')
+                                        .doc(userId)
+                                        .collection('task')
+                                        .doc(taskId)
+                                        .update({'status': newStatus});
+
+                                    // Beri umpan balik kepada pengguna
+                                    ScaffoldMessenger.of(context).showSnackBar(
+                                      SnackBar(
+                                        content: Text(
+                                            "Status updated to $newStatus"),
+                                        duration: Duration(seconds: 2),
+                                      ),
+                                    );
+                                  },
+                                  child: Padding(
+                                    padding: const EdgeInsets.only(right: 9.0),
+                                    child: Container(
+                                      width: 50,
+                                      height: 50,
+                                      decoration: BoxDecoration(
+                                        color: cardColor,
+                                        borderRadius:
+                                            BorderRadius.circular(100),
+                                      ),
+                                      child: Icon(
+                                        Icons
+                                            .done, // Ikon klik untuk mengubah status
+                                        size: 30,
+                                        color: iconColor,
+                                      ),
                                     ),
                                   ),
-                                )
-                                .toList());
-                      }
-                    }),
+                                ),
+                              ],
+                            ),
+                          ),
+                        );
+                      }).toList(),
+                    );
+                  },
+                ),
                 const SizedBox(width: 10),
               ],
             ),
